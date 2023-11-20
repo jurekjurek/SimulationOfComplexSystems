@@ -170,7 +170,11 @@ def BuyAndSellRandomly():
     return None 
 
 
-
+def Scalping(timeA, timeB): 
+    '''
+    stock has been rising for a certain short time (timeA)  -> buy 
+    stock has been rising for a long time (timeB)           -> sell
+    '''
 
 
 def CompareStrategies(stockEvolution, taxFactor): 
