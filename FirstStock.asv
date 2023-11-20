@@ -101,17 +101,10 @@ function SwingTrade(stockEvolution, taxFactor, numDays, winPercentage)
     % start witth buying
     buyValue = stockEvolution(1); 
 
-    % do we hold a stock right now? 
-    invested = true;
-
     % when it hits a certain threshold, sell 
     for index = 1:length(stockEvolution)
         
-        if stockEvolution(index) > winPercentage * buyValue
-            
-            sellValue = stockEvolution(index);
-
-        end
+        if stockEvolution(index) > winPercentage *
 
     end
 
