@@ -9,15 +9,30 @@ from stocks import *
 
 
 
-def BuyAndHold(stockEvolution): 
+def BuyAndHold(stockEvolution, timeStep): 
     '''
     given a stock over a certain number of days 
+
+    Each of the trading strategy functions has two booleans: buy and sell
+    buy indicates if it would be a good idea to buy, given the timestep as well as the stock 
+    sell indicates if it would be a good idea to sell. 
     '''
 
-    buyPrice = stockEvolution[0]
-    sellPrice = stockEvolution[-1]
+    buy = False
+    sell = False 
 
-    return sellPrice - buyPrice
+    if timeStep == 0: 
+
+        # if first possible option to trade 
+        buy = True 
+
+    if timeStep == len(stockEvolution)-1: 
+
+        # if last possible option to trade, sell 
+        sell = True 
+        
+
+    return buy, sell 
 
 
 def MovingAverage(stockEvolution, daysConsidered, dT, sellFactor ): 
@@ -129,9 +144,11 @@ def RangeTrading(stockEvolution, dayRange, dT, rangeLimit, offset):
         lowerLimit = np.min(arrayOfInterest)
 
         if upperLimit - lowerLimit < rangeLimit: 
+            range = True 
+        else: 
+            range = False
             
-
-
+    
 
 
     return None 
