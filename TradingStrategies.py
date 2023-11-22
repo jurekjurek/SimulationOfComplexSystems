@@ -91,21 +91,48 @@ def OtherMovingAverage():
 
 def MeanReversion(): 
     '''
-    No, consider two Stocks of the same category. If one falls, and the other does not, this might be an opportunity to buy 
-
     Calculate mean over certain timeframe, then calculate standard deviation and Z value indicating if a price is lower or higher than actual value
-
+    
+    -> use Z value 
 
     '''
+
+
     return None
 
 
 
-def RangeTrading():
+def RangeTrading(stockEvolution, dayRange, dT, rangeLimit, offset):
     '''
     if the Stock is clearly  - only shortterm!!! - between a min and a max value for the last x timesteps -> buy when high in this range 
     sell when break out of range... (some indicators exist ... )
+
+    buy when at lower range max 
+    sell when at higher range max 
+
+    offset is distance from limit. If limit - offset is the current price, we buy. Else we do not. 
+
     '''
+
+    # look a certain number of timesteps in the past
+    # if the max and min value of the array corresponding to this certain timeframe is not significantly larger than some certain range we specified, 
+    # buy and view this as a range 
+
+    for iteration in range(len(stockEvolution)): 
+
+        arrayOfInterest = stockEvolution[iteration: iteration + int(dayRange * 1/dT)]
+
+        # find max in array (upper range limit)
+        upperLimit = np.max(arrayOfInterest)
+
+        # find min in array (lower range limit)
+        lowerLimit = np.min(arrayOfInterest)
+
+        if upperLimit - lowerLimit < rangeLimit: 
+            
+
+
+
 
     return None 
 
