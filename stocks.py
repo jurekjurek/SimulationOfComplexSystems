@@ -13,15 +13,6 @@ NUMBEROFSIMULATIONS = 5  # Number of simulations
 DT = 1/24
 
 
-def generate_stock_prices(initial_price, drift, volatility, num_days, dt=1):
-    prices = [initial_price]
-    for _ in range(num_days - 1):
-        daily_return = ( drift - volatility**2 / 2 ) * dt + volatility * np.random.normal(0, np.sqrt(dt))
-        price_today = prices[-1] * np.exp(daily_return)
-        prices.append(price_today)
-    return prices
-
-
 
 def generate_stock_prices(initialPrice, drift, volatility, numDays, dT):
     '''
@@ -37,7 +28,7 @@ def generate_stock_prices(initialPrice, drift, volatility, numDays, dT):
 
     # prices = [initial_price]
     for i in range(1, lengthStock):
-        tempValue = drift * dT + volatility * np.random.normal(0, np.sqrt(dT))
+        tempValue = ( drift - volatility**2 / 2 ) * dT + volatility * np.random.normal(0, np.sqrt(dT))
         tempPrice = stockEvolution[i-1] * np.exp(tempValue)
         stockEvolution[i] = tempPrice
     return stockEvolution
@@ -45,14 +36,19 @@ def generate_stock_prices(initialPrice, drift, volatility, numDays, dT):
 
 
 # Generate stock prices
-# plt.figure(figsize=(10, 6))
-# for i in range(NUMBEROFSIMULATIONS):
-#     prices = generate_stock_prices(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS)
-#     plt.plot(prices, label = 'Stock No. ' + str(i))
+plt.figure(figsize=(10, 6))
+for i in range(NUMBEROFSIMULATIONS):
+    prices = generate_stock_prices(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+    plt.plot(prices, label = 'Stock No. ' + str(i))
 
-stock = generate_stock_prices(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
-plt.plot(stock, label = 'Stock')
+# stock = generate_stock_prices(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
 
+# plt.plot(stock, label = 'Stock')
+plt.title('Stocks simulated using GBM')
+plt.xlabel('Time [h]')
+plt.ylabel('Price')
+plt.legend()
+plt.show()
 
 
 
@@ -113,7 +109,7 @@ def CalculateZScore(stock, dayNo, dT, daysConsidered):
 
 
 
-
+exit()
 
 
 
