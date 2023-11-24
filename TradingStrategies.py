@@ -1,14 +1,6 @@
 from stocks import * 
 
 
-
-
-
-
-
-
-
-
 def BuyAndHold(stockEvolution, timeStep): 
     '''
     given a stock over a certain number of days 
@@ -35,12 +27,34 @@ def BuyAndHold(stockEvolution, timeStep):
     return buy, sell 
 
 
-def MovingAverage(stock, timeStep): 
+def MovingAverage(stock, timeStep, dayRange, dT): 
     '''
     If we notice an upwards or downwards trend in the moving average, buy (sell).
+
+    return: Two booleans, indicating if we want to sell or buy
     '''
 
+    currentPrice = stock[timeStep]
 
+    currentDay = int(timeStep * dT)
+
+    # if we have not passed 3 days yet, return not buy, not sell
+    if currentDay <= 3: 
+        return False, False
+
+    # if in the last 3 days, the average went only up, buy 
+    avg1 = CalculateMovingAverage(stock, currentDay, dT, dayRange, True)
+    avg2 = CalculateMovingAverage(stock, currentDay-1, dT, dayRange, True)
+    avg3 = CalculateMovingAverage(stock, currentDay-2, dT, dayRange, True)
+
+    if avg1 < avg2 and avg2 < avg3: 
+        return True, False
+    
+    elif avg1 > avg2 and avg2 > avg3: 
+        return False, True
+
+    else: 
+        return False, False
 
 
 
@@ -50,27 +64,66 @@ def ExponentialMovingAverage(stock, timeStep):
     '''
     return None 
 
-def CrossOverMovingAverage(stock, timeStep): 
+def CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT): 
     '''
     Use short term and long term average and buy if they cross 
+
+    We want to make use of short time fluctuations in the market using this strategy 
+
     '''
-    return None 
+    currentPrice = stock[timeStep]
+
+    currentDay = int(timeStep * dT)
 
 
-def MeanReversion(stock, timeStep): 
+    avgLong1 = CalculateMovingAverage(stock, currentDay, dT, dayRangeLong, True)
+    avgLong2 = CalculateMovingAverage(stock, currentDay-1, dT, dayRangeLong, True)
+
+    avgShort1 = CalculateMovingAverage(stock, currentDay, dT, dayRangeShort, True)
+    avgShort2 = CalculateMovingAverage(stock, currentDay-1, dT, dayRangeShort, True)
+
+    # if shortrange crosses over longrange, buy 
+    if avgShort1 < avgLong1 and avgShort2 > avgLong2: 
+        return True, False 
+
+    # if shortrange crosses under longrange, sell 
+    elif avgShort1 > avgLong1 and avgShort2 < avgLong2: 
+        return False, True 
+
+    else: 
+        return False, False
+     
+
+
+
+def MeanReversion(stock, timeStep, dT, dayRange): 
     '''
-    Calculate mean over certain timeframe, then calculate standard deviation and Z value indicating if a price is lower or higher than actual value
-    
     -> use Z value 
 
     '''
 
+    currentPrice = stock[timeStep]
 
-    return None
+    currentDay = int(timeStep * dT)
+
+    zValue = CalculateZScore(stock, currentDay, dT, dayRange)
+
+    # buy, undervalued
+    if zValue < -1.5: 
+        return True, False 
+
+    # sell, overvalued
+    elif zValue > 1.5: 
+        return False, True 
+
+    # neither buy nor sell 
+    else: 
+        return False, False
+        
 
 
 
-def RangeTrading(stockEvolution, dayRange, dT, rangeLimit, offset, timeStep):
+def RangeTrading(stock, dayRange, dT, rangeLimit, offset, timeStep):
     '''
     if the Stock is clearly  - only shortterm!!! - between a min and a max value for the last x timesteps -> buy when high in this range 
     sell when break out of range... (some indicators exist ... )
@@ -82,36 +135,73 @@ def RangeTrading(stockEvolution, dayRange, dT, rangeLimit, offset, timeStep):
 
     '''
 
-    # look a certain number of timesteps in the past
-    # if the max and min value of the array corresponding to this certain timeframe is not significantly larger than some certain range we specified, 
-    # buy and view this as a range 
+    currentPrice = stock[timeStep]
 
-    for iteration in range(len(stockEvolution)): 
-
-        arrayOfInterest = stockEvolution[iteration: iteration + int(dayRange * 1/dT)]
-
-        # find max in array (upper range limit)
-        upperLimit = np.max(arrayOfInterest)
-
-        # find min in array (lower range limit)
-        lowerLimit = np.min(arrayOfInterest)
-
-        if upperLimit - lowerLimit < rangeLimit: 
-            range = True 
-        else: 
-            range = False
+    if int(dayRange * 1/dT) > timeStep: 
+        return False, False
             
-    
+    arrayOfInterest = stock[timeStep - int(dayRange * 1/dT): timeStep]
+
+    # look at maximum of this part of the stock 
+    upperLimit = np.max(arrayOfInterest)
+
+    # find min in array (lower range limit)
+    lowerLimit = np.min(arrayOfInterest)
+
+    # if there exists a range within the margin we defined 
+    if upperLimit - lowerLimit < rangeLimit: 
+
+        # if currentprice is within offset away from upper limit -> sell 
+        if currentPrice >= upperLimit * offset:
+            return False, True 
+
+        elif currentPrice <= lowerLimit * offset: 
+            return True, False 
+
+        else: 
+            return False, False 
 
 
-    return None 
 
 
-def BreakOut(stock, timeStep): 
+def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep): 
     ''''
     Again, a range between min and max. 
     And here, if the stock breaks out above the max, buy and sell as soon as it falls again. 
+
+
+
+
+
+    You have to check this again!!!!
     '''
+
+    currentPrice = stock[timeStep]
+
+    if int(dayRange * 1/dT) > timeStep: 
+        return False, False
+            
+    # we want to break out of the range!! 
+    arrayOfInterest = stock[timeStep - int((dayRange + 1) * 1/dT): timeStep - int((1) * 1/dT)]
+
+    # look at maximum of this part of the stock 
+    upperLimit = np.max(arrayOfInterest)
+
+    # find min in array (lower range limit)
+    lowerLimit = np.min(arrayOfInterest)
+
+    # if there exists a range within the margin we defined 
+    if upperLimit - lowerLimit < rangeLimit: 
+
+        # if currentprice is within offset away from upper limit -> sell 
+        if currentPrice > upperLimit:
+            return False, True 
+
+        elif currentPrice <= lowerLimit * offset: 
+            return True, False 
+
+        else: 
+            return False, False 
 
 
 
