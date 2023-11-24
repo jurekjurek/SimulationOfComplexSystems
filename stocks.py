@@ -16,6 +16,8 @@ DT = 1/24
 
 def generate_stock_prices(initialPrice, drift, volatility, numDays, dT):
     '''
+    This function simulates a stock using geometric brownian motion. 
+
     dT will be given in fraction of day -> updating every hour 
     '''
 
@@ -26,35 +28,36 @@ def generate_stock_prices(initialPrice, drift, volatility, numDays, dT):
 
     stockEvolution[0] = initialPrice
 
-    # prices = [initial_price]
+    # iterate over stock 
     for i in range(1, lengthStock):
         tempValue = ( drift - volatility**2 / 2 ) * dT + volatility * np.random.normal(0, np.sqrt(dT))
         tempPrice = stockEvolution[i-1] * np.exp(tempValue)
         stockEvolution[i] = tempPrice
+
     return stockEvolution
 
 
+def ShowSomeStocks(numberOfStocks):
 
-# Generate stock prices
-plt.figure(figsize=(10, 6))
-for i in range(NUMBEROFSIMULATIONS):
-    prices = generate_stock_prices(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
-    plt.plot(prices, label = 'Stock No. ' + str(i))
+    plt.figure(figsize=(10, 6))
+    for i in range(numberOfStocks):
+        prices = generate_stock_prices(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+        plt.plot(prices, label = 'Stock No. ' + str(i))
 
-# stock = generate_stock_prices(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+    plt.title('Stocks simulated using GBM')
+    plt.xlabel('Time [h]')
+    plt.ylabel('Price')
+    plt.legend()
+    plt.show()
 
-# plt.plot(stock, label = 'Stock')
-plt.title('Stocks simulated using GBM')
-plt.xlabel('Time [h]')
-plt.ylabel('Price')
-plt.legend()
-plt.show()
-
+ShowSomeStocks(NUMBEROFSIMULATIONS)
 
 
 
 def CalculateMovingAverage(stock, dayNo, dT, daysConsidered, onlyClosingPrices): 
-
+    '''
+    This function calculates the average in a stock for day dayNo over the last daysConsidered days. 
+    '''
     if dayNo < daysConsidered: 
         return None
 
@@ -69,7 +72,6 @@ def CalculateMovingAverage(stock, dayNo, dT, daysConsidered, onlyClosingPrices):
     if onlyClosingPrices: 
         avg = np.mean(partOfArray[:: stepsPerDay ])
     else: 
-
         # just take into account the whole array for the last few days 
         avg = np.mean(partOfArray)
 
