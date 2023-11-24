@@ -14,7 +14,7 @@ DT = 1/24
 
 
 
-def generate_stock_prices(initialPrice, drift, volatility, numDays, dT):
+def GenerateStocks(initialPrice, drift, volatility, numDays, dT):
     '''
     This function simulates a stock using geometric brownian motion. 
 
@@ -41,7 +41,7 @@ def ShowSomeStocks(numberOfStocks):
 
     plt.figure(figsize=(10, 6))
     for i in range(numberOfStocks):
-        prices = generate_stock_prices(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+        prices = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
         plt.plot(prices, label = 'Stock No. ' + str(i))
 
     plt.title('Stocks simulated using GBM')

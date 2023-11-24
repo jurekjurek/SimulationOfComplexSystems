@@ -15,7 +15,7 @@ from stocks import *
 def MainSimulation(numberOfHoldsAtTheSameTime): 
 
     # create simulated stock 
-    stock = SomeSimulation()
+    stock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
 
 
     profit1 = Trading(stock, BuyAndHold, numberOfHoldsAtTheSameTime)
