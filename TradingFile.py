@@ -26,13 +26,28 @@ def MainSimulation(numberOfHoldsAtTheSameTime):
 
 
 
-def Trading(stock, TradingStrategy, numberOfHoldsAtTheSameTime, taxFactor = 0.25): 
+def Trading(stock, TradingStrategy, allowHoldsAtTheSameTime, maxBuys, dT, taxFactor = 0.25): 
 
     # list of prices where the player bought a stock -> possible to hold more than one stock at a time 
     buyList = []
 
     # list of prices where a player sold a stock 
     sellList = []
+
+    sellIndicesList = []
+
+    # variables inside function, probably not a good idea 
+    dayRange = 1
+    dayRangeLong = 10
+    dayRangeShort = 5
+
+    rangeLimit = 20
+    rangeOffset = 0.5
+
+    scalpingTimeA = 1
+    scalpingTimeB = 1
+
+
 
     # iterate over Stock -> each element, because each element in the stock is a possible time to buy or sell (for certain trading strategies)
     for timeStep in range(len(stock)): 
@@ -41,14 +56,52 @@ def Trading(stock, TradingStrategy, numberOfHoldsAtTheSameTime, taxFactor = 0.25
 
 
         # for now, sell decision is independent of value of buyPrice!!
-        buy, sell = TradingStrategy(stock, ...)
+        # buy, sell = TradingStrategy(stock, ...)
+
+        # take a look at all the trading strategies: 
+        if TradingStrategy == 'MovingAverage': 
+            buy, sell = MovingAverage(stock, timeStep, dayRange, dT)
+
+        elif TradingStrategy == 'BuyAndHold': 
+            buy, sell = BuyAndHold(stock, timeStep)
+        elif TradingStrategy == 'ExponentialMovingAverage': 
+            buy, sell = ExponentialMovingAverage(stock, timeStep)
+        elif TradingStrategy == 'CrossoverMovingAverage': 
+            buy, sell = CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT)
+        elif TradingStrategy == 'MeanReversion':
+            buy, sell = MeanReversion(stock, timeStep, dT, dayRange)
+        elif TradingStrategy == 'RangeTrading': 
+            buy, sell = RangeTrading(stock, dayRange, dT, rangeLimit, rangeOffset, timeStep)
+        elif TradingStrategy == 'BreakOut':
+            buy, sell = BreakOut(stock, dayRange, dT, rangeLimit, rangeOffset, timeStep)
+        elif TradingStrategy == 'BuyMorningSellNight': 
+            buy, sell = BuyMorningSellNight(stock, timeStep, dT)
+        elif TradingStrategy == 'Scalping': 
+            buy, sell = Scalping(stock, timeStep, scalpingTimeA, scalpingTimeB)
+        elif TradingStrategy == 'BuyAndSellRandomly':
+            buy, sell = BuyAndSellRandomly(stock, timeStep, dT)
+
+
+
     
-        if buy: 
-            buyList.append(currentPrice)
+        if buy and len(buyList) <= maxBuys: 
+            if allowHoldsAtTheSameTime: 
+                buyList.append(currentPrice)
+            elif len(buyList) == len(sellList): 
+                buyList.append(currentPrice)
 
         if sell and len(sellList) < len(buyList): 
-            sellPrice = currentPrice * taxFactor
+            sellPrice = currentPrice
+
+            # look at taxes. If we made profit, there's taxes on the profit. 
+            correspondingBuyPrice = buyList[len(sellList)-1]
+
+            if sellPrice > correspondingBuyPrice:
+                diff = sellPrice - correspondingBuyPrice
+                sellPrice = correspondingBuyPrice + taxFactor * diff
+
             sellList.append(sellPrice)
+            sellIndicesList.append(timeStep)
 
 
         # number of stocks we hold: 
@@ -60,6 +113,7 @@ def Trading(stock, TradingStrategy, numberOfHoldsAtTheSameTime, taxFactor = 0.25
             # sell all stocks for the current price 
             for i in range(numStocksHeld): 
                 sellList.append(currentPrice)
+                sellIndicesList.append(timeStep)
 
 
     profit = 0
@@ -70,7 +124,53 @@ def Trading(stock, TradingStrategy, numberOfHoldsAtTheSameTime, taxFactor = 0.25
         profit += tempProfit
 
 
-    return profit
+    return profit, buyList, sellList, sellIndicesList
             
 
+stock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+
+profit, a, b, c = Trading(stock, 'MovingAverage', False, 1, DT)
+
+# print(profit, a, b)
+
+# print(len(a), len(b))
+
+# print(b[0], np.where(stock == b[0]))
+
+plt.plot(stock)
+
+DAYSCONSIDERED = 20
+
+
+averageList10 = []
+averageList5 = []
+zScoreList = []
+daysList = np.arange(NUMBEROFDAYS) * 1/DT
+
+for i in range(NUMBEROFDAYS):
+
+    zScoreList.append(CalculateZScore(stock, i, DT, DAYSCONSIDERED))
+    averageList10.append(CalculateMovingAverage(stock, i, DT, DAYSCONSIDERED, True))
+    averageList5.append(CalculateMovingAverage(stock, i, DT, 5, True))
+
+
+plt.plot(daysList, averageList10, label = 'Moving Average, ' + str(DAYSCONSIDERED))
+plt.plot(daysList, averageList5, label = 'Moving Average, ' + str(5))
+# plt.scatter(np.where(stock == a[0]), a[0], color = 'orange', label = 'Buy')
+# plt.scatter(c[0], stock[c[0]], color = 'black', label = 'Sell')
+plt.title('Stocks simulated using GBM')
+plt.xlabel('Time [h]')
+plt.ylabel('Price')
+plt.xlim((DAYSCONSIDERED * 1/DT, daysList[-1]))
+plt.legend()
+plt.show()
+
+
+# plot Z value 
+plt.plot(daysList, zScoreList, label = 'Z-Score, ' + str(DAYSCONSIDERED))
+plt.title('Evolution of the Z-Value')
+plt.xlabel('Time [h]')
+plt.ylabel('Z-Value')
+plt.legend()
+plt.show()
 

@@ -1,7 +1,7 @@
 from stocks import * 
 
 
-def BuyAndHold(stockEvolution, timeStep): 
+def BuyAndHold(stock, timeStep): 
     '''
     given a stock over a certain number of days 
 
@@ -18,13 +18,25 @@ def BuyAndHold(stockEvolution, timeStep):
         # if first possible option to trade 
         buy = True 
 
-    if timeStep == len(stockEvolution)-1: 
+    if timeStep == len(stock)-1: 
 
         # if last possible option to trade, sell 
         sell = True 
         
 
     return buy, sell 
+
+
+
+
+
+# stock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+
+
+
+
+
+
 
 
 def MovingAverage(stock, timeStep, dayRange, dT): 
@@ -39,13 +51,13 @@ def MovingAverage(stock, timeStep, dayRange, dT):
     currentDay = int(timeStep * dT)
 
     # if we have not passed 3 days yet, return not buy, not sell
-    if currentDay <= 3: 
+    if currentDay * 1/dT <= timeStep + (3*1/dT): 
         return False, False
 
     # if in the last 3 days, the average went only up, buy 
-    avg1 = CalculateMovingAverage(stock, currentDay, dT, dayRange, True)
+    avg1 = CalculateMovingAverage(stock, currentDay-2, dT, dayRange, True)
     avg2 = CalculateMovingAverage(stock, currentDay-1, dT, dayRange, True)
-    avg3 = CalculateMovingAverage(stock, currentDay-2, dT, dayRange, True)
+    avg3 = CalculateMovingAverage(stock, currentDay, dT, dayRange, True)
 
     if avg1 < avg2 and avg2 < avg3: 
         return True, False
@@ -55,6 +67,7 @@ def MovingAverage(stock, timeStep, dayRange, dT):
 
     else: 
         return False, False
+
 
 
 
@@ -73,7 +86,7 @@ def CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT):
     '''
     currentPrice = stock[timeStep]
 
-    currentDay = int(timeStep * dT)
+    currentDay = int(timeStep * 1/dT)
 
 
     avgLong1 = CalculateMovingAverage(stock, currentDay, dT, dayRangeLong, True)
@@ -104,7 +117,7 @@ def MeanReversion(stock, timeStep, dT, dayRange):
 
     currentPrice = stock[timeStep]
 
-    currentDay = int(timeStep * dT)
+    currentDay = int(timeStep * 1/dT)
 
     zValue = CalculateZScore(stock, currentDay, dT, dayRange)
 
@@ -205,21 +218,21 @@ def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep):
 
 
 
-def IntraDayMeanReversion(stock, timeStep): 
-    return None 
+# def IntraDayMeanReversion(stock, timeStep): 
+#     return None 
 
 
-def MomentumStrategy(stock, timeStep): 
-    '''
-    Buy when 2nd derivative == 0
-    '''
+# def MomentumStrategy(stock, timeStep): 
+#     '''
+#     Buy when 2nd derivative == 0
+#     '''
 
 
 
-def ReversalTrading(stock, timeStep): 
-    '''
-    If it has been falling for a long time and now starts rising again -> buy 
-    '''
+# def ReversalTrading(stock, timeStep): 
+#     '''
+#     If it has been falling for a long time and now starts rising again -> buy 
+#     '''
 
 
 

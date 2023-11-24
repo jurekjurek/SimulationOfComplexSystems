@@ -7,7 +7,7 @@ NUMBEROFDAYS = 100
 
 INITIALPRICE = 100  # Initial stock price
 DRIFT = 0.0001       # Drift term
-VOLATILITY = 0.01    # Volatility term
+VOLATILITY = 0.01  # Volatility term
 NUMBEROFSIMULATIONS = 5  # Number of simulations
 
 DT = 1/24
@@ -44,7 +44,7 @@ def ShowSomeStocks(numberOfStocks):
         prices = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
         plt.plot(prices, label = 'Stock No. ' + str(i))
 
-    plt.title('Stocks simulated using GBM')
+    plt.title('Stocks simulated using GBM, Drift = ' + str(DRIFT) + ' Volatility = ' +str(VOLATILITY))
     plt.xlabel('Time [h]')
     plt.ylabel('Price')
     plt.legend()
@@ -96,13 +96,9 @@ def CalculateZScore(stock, dayNo, dT, daysConsidered):
 
     partOfArray = stock[int( (dayNo - daysConsidered) * stepsPerDay) : int(dayNo * stepsPerDay)]
 
-    print('tsetsetets', partOfArray)
-
     deviation = partOfArray[-1] - mean 
 
     std = np.std(partOfArray)
-
-    print('testestsetetset', std)
 
     zScore = deviation / std
 
@@ -111,36 +107,35 @@ def CalculateZScore(stock, dayNo, dT, daysConsidered):
 
 
 
-exit()
 
 
 
 
 
-DAYSCONSIDERED = 5
+# DAYSCONSIDERED = 5
 
 
-averageList = []
-zScoreList = []
-daysList = np.arange(NUMBEROFDAYS) * 1/DT
+# averageList = []
+# zScoreList = []
+# daysList = np.arange(NUMBEROFDAYS) * 1/DT
 
-for i in range(NUMBEROFDAYS):
+# for i in range(NUMBEROFDAYS):
 
-    zScoreList.append(CalculateZScore(stock, i, DT, DAYSCONSIDERED))
-    averageList.append(CalculateMovingAverage(stock, i, DT, DAYSCONSIDERED, True))
-
-
-plt.plot(daysList, averageList, label = 'Moving Average, ' + str(DAYSCONSIDERED))
-
-print(type(averageList), type(zScoreList))
+#     zScoreList.append(CalculateZScore(stock, i, DT, DAYSCONSIDERED))
+#     averageList.append(CalculateMovingAverage(stock, i, DT, DAYSCONSIDERED, True))
 
 
-plt.plot(daysList, zScoreList, label = 'Z-Score')
-plt.title('Stock Price Simulation, Moving Average')
-plt.xlabel('Hours')
-plt.ylabel('Stock Price')
-plt.legend()
+# plt.plot(daysList, averageList, label = 'Moving Average, ' + str(DAYSCONSIDERED))
+
+# print(type(averageList), type(zScoreList))
+
+
+# plt.plot(daysList, zScoreList, label = 'Z-Score')
+# plt.title('Stock Price Simulation, Moving Average')
+# plt.xlabel('Hours')
+# plt.ylabel('Stock Price')
+# plt.legend()
+# # plt.show()
+
+
 # plt.show()
-
-
-plt.show()
