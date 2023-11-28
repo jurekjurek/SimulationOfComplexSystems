@@ -163,34 +163,7 @@ def MeanReversion(stock, timeStep, dT, dayRange):
 
 
 
-# test
 
-NUMBEROFDAYS = 300
-
-INITIALPRICE = 100  # Initial stock price
-DRIFT = 0.0001       # Drift term
-VOLATILITY = 0.01  # Volatility term
-
-DT = 1/24
-
-stock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
-
-buyList = []
-sellList = []
-
-for timeStep in range(len(stock)):
-    print(timeStep)
-    buy, sell = MeanReversion(stock, timeStep, DT, 10)
-
-    buyList.append(buy)
-    sellList.append(sell)
-
-print(buyList.count(True), buyList.count(False))
-print(sellList.count(True), sellList.count(False))
-
-ShowStock(stock, False, 0, True, [10])
-
-exit()
 
 
 
@@ -212,7 +185,8 @@ def RangeTrading(stock, dayRange, dT, rangeLimit, offset, timeStep):
     if int(dayRange * 1/dT) > timeStep: 
         return False, False
             
-    arrayOfInterest = stock[timeStep - int(dayRange * 1/dT): timeStep]
+    # we want to include this timestep in the range as well 
+    arrayOfInterest = stock[timeStep - int((dayRange-1) * 1/dT): timeStep+1]
 
     # look at maximum of this part of the stock 
     upperLimit = np.max(arrayOfInterest)
@@ -220,23 +194,34 @@ def RangeTrading(stock, dayRange, dT, rangeLimit, offset, timeStep):
     # find min in array (lower range limit)
     lowerLimit = np.min(arrayOfInterest)
 
+    # if, in this timestep not within range, return 
+    if currentPrice > upperLimit or currentPrice < lowerLimit: 
+        return False, False
+
     # if there exists a range within the margin we defined 
     if upperLimit - lowerLimit < rangeLimit: 
 
         # if currentprice is within offset away from upper limit -> sell 
-        if currentPrice >= upperLimit * offset:
+        if currentPrice > upperLimit - offset:
             return False, True 
 
-        elif currentPrice <= lowerLimit * offset: 
+        elif currentPrice < lowerLimit + offset: 
             return True, False 
 
         else: 
             return False, False 
+    
+    
+    else: 
+        return False, False
+
+
+# offset of 0.1 euro works well for above 
 
 
 
 
-def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep): 
+def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep, otherUpperLimit): 
     ''''
     Again, a range between min and max. 
     And here, if the stock breaks out above the max, buy and sell as soon as it falls again. 
@@ -251,10 +236,11 @@ def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep):
     currentPrice = stock[timeStep]
 
     if int(dayRange * 1/dT) > timeStep: 
-        return False, False
+        return False, False, currentPrice * 10e6
             
     # we want to break out of the range!! 
-    arrayOfInterest = stock[timeStep - int((dayRange + 1) * 1/dT): timeStep - int((1) * 1/dT)]
+    arrayOfInterest = stock[timeStep - int(dayRange * 1/dT): timeStep]
+    # stock[timeStep - int((dayRange + 1) * 1/dT): timeStep - int((1) * 1/dT)]
 
     # look at maximum of this part of the stock 
     upperLimit = np.max(arrayOfInterest)
@@ -267,17 +253,48 @@ def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep):
 
         # if currentprice is within offset away from upper limit -> sell 
         if currentPrice > upperLimit:
-            return False, True 
+            return True, False, upperLimit
 
-        elif currentPrice <= lowerLimit * offset: 
-            return True, False 
+        elif currentPrice <= otherUpperLimit: 
+            return False, True, upperLimit
 
         else: 
-            return False, False 
+            return False, False, upperLimit
     
     else: 
-        return False, False
+        return False, False, upperLimit
 
+
+# EXAMPLE FOR BREAKOUTTRADING
+
+# NUMBEROFDAYS = 300
+
+# INITIALPRICE = 100  # Initial stock price
+# DRIFT = 0.0001       # Drift term
+# VOLATILITY = 0.01  # Volatility term
+
+# DT = 1/24
+
+# stock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+
+# buyList = []
+# sellList = []
+
+# asdf = 0
+
+# for timeStep in range(len(stock)):
+#     print(timeStep)
+#     buy, sell, asdf = BreakOut(stock, 3, DT, 10, 0.1, timeStep, asdf)
+
+#     buyList.append(buy)
+#     sellList.append(sell)
+
+# print(buyList.count(True), buyList.count(False))
+# print(sellList.count(True), sellList.count(False))
+
+# ShowStock(stock, False, 0, True, [10])
+
+# exit()
 
 
 # def IntraDayMeanReversion(stock, timeStep): 
@@ -298,7 +315,8 @@ def ReversalTrading(stock, timeStep, timeA, timeB):
     Essentially the same as scalping somehow
 
     '''
-    buy, sell = True
+    buy = True
+    sell = True
 
     for i in range(timeA): 
         # if stock has not been constantly increasing in the last timeA timesteps, we do not buy 
@@ -318,20 +336,31 @@ def ReversalTrading(stock, timeStep, timeA, timeB):
 
     return buy, sell
 
+# 10 works as timeA and timeB for ReversalTrading
+
+
+
 
 def BuyMorningSellNight(stock, timeStep, dT): 
     '''
     Easy strategy where we buy every morning and sell every night 
     '''
-    dayLength = len(stock) * dT 
+    dayLength = int(len(stock) / NUMBEROFDAYS)
 
+    buy = False
+    sell = False
+
+    # morning
     if timeStep % dayLength == 0: 
-        return True, False
-    if timeStep % (dayLength + 1) == 0: 
-        return False, True
+        buy = True
+
+    # night
+    if timeStep % (dayLength) == 1: 
+        sell = True
+
+    return buy, sell
 
 
-    return False, False  
 
 
 
@@ -355,15 +384,24 @@ def BuyAndSellRandomly(stock, timeStep, thresHoldProbability):
     return False, False 
 
 
+
+
+
+
+
+
 def Scalping(stock, timeStep, timeA, timeB): 
     '''
     stock has been rising for a certain short time (timeA)  -> buy 
     stock has been rising for a long time (timeB)           -> sell
 
     timeA and timeB are given in timeSteps
+
+    timeA and timeB could be around 10 timesteps
     '''
 
-    buy, sell = True
+    buy = True
+    sell = True
 
     for i in range(timeA): 
         # if stock has not been constantly increasing in the last timeA timesteps, we do not buy 
@@ -382,5 +420,6 @@ def Scalping(stock, timeStep, timeA, timeB):
 
 
     return buy, sell
+
 
 
