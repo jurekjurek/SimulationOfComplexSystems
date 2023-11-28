@@ -50,7 +50,7 @@ def ShowSomeStocks(numberOfStocks):
     plt.legend()
     plt.show()
 
-ShowSomeStocks(NUMBEROFSIMULATIONS)
+# ShowSomeStocks(NUMBEROFSIMULATIONS)
 
 
 

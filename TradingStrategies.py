@@ -1,5 +1,5 @@
 from stocks import * 
-
+import random
 
 def BuyAndHold(stock, timeStep): 
     '''
@@ -229,32 +229,96 @@ def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep):
 
 
 
-# def ReversalTrading(stock, timeStep): 
-#     '''
-#     If it has been falling for a long time and now starts rising again -> buy 
-#     '''
+def ReversalTrading(stock, timeStep, timeA, timeB): 
+    '''
+    If it has been falling for a long time and now starts rising again -> buy 
+
+    Essentially the same as scalping somehow
+
+    '''
+    buy, sell = True
+
+    for i in range(timeA): 
+        # if stock has not been constantly increasing in the last timeA timesteps, we do not buy 
+        if not stock[timeStep - i] > stock[timeStep - (i+1)]: 
+            buy = False
+        else: 
+            continue
+        
+    for j in range(timeB): 
+        # if stock has not been constantly decreasing in the last timeB timesteps, we do not sell
+        if not stock[timeStep - j] < stock[timeStep - (j+1)]:
+            sell = False
+
+        else: 
+            continue
 
 
+    return buy, sell
 
-def BuyMorningSellNight(stock, timeStep): 
+
+def BuyMorningSellNight(stock, timeStep, dT): 
     '''
     Easy strategy where we buy every morning and sell every night 
     '''
-    return None 
+    dayLength = len(stock) * dT 
+
+    if timeStep % dayLength == 0: 
+        return True, False
+    if timeStep % (dayLength + 1) == 0: 
+        return False, True
+
+
+    return False, False  
 
 
 
-def BuyAndSellRandomly(stock, timeStep): 
+def BuyAndSellRandomly(stock, timeStep, thresHoldProbability): 
     '''
     Buy at random times and sell at random times. 
+    Independent of the timestep or anything else. 
     '''
-    return None 
+
+    randomNumberBuy = random.random()
+    randomNumberSell = random.random()
+
+    if randomNumberBuy < thresHoldProbability: 
+        return True, False
+
+    if randomNumberSell < thresHoldProbability: 
+        return False, True
+    
+
+
+    return False, False 
 
 
 def Scalping(stock, timeStep, timeA, timeB): 
     '''
     stock has been rising for a certain short time (timeA)  -> buy 
     stock has been rising for a long time (timeB)           -> sell
+
+    timeA and timeB are given in timeSteps
     '''
+
+    buy, sell = True
+
+    for i in range(timeA): 
+        # if stock has not been constantly increasing in the last timeA timesteps, we do not buy 
+        if not stock[timeStep - i] > stock[timeStep - (i+1)]: 
+            buy = False
+        else: 
+            continue
+        
+    for j in range(timeB): 
+        # if stock has not been constantly decreasing in the last timeB timesteps, we do not sell
+        if not stock[timeStep - j] < stock[timeStep - (j+1)]:
+            sell = False
+
+        else: 
+            continue
+
+
+    return buy, sell
 
 
