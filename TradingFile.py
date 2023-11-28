@@ -129,7 +129,7 @@ def Trading(stock, TradingStrategy, allowHoldsAtTheSameTime, maxBuys, dT, taxFac
 
 stock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
 
-profit, buyList, sellList, sellListIndices = Trading(stock, 'BuyAndSellRandomly', False, 1, DT)
+profit, buyList, sellList, sellListIndices = Trading(stock, 'MovingAverage', False, 1, DT)
 
 print(buyList, sellList)
 print(profit)

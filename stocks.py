@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 # global variables 
-NUMBEROFDAYS = 100
+NUMBEROFDAYS = 300
 
 INITIALPRICE = 100  # Initial stock price
 DRIFT = 0.0001       # Drift term

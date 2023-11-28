@@ -75,7 +75,11 @@ def ExponentialMovingAverage(stock, timeStep):
     '''
     
     '''
-    return None 
+    return True, True 
+
+
+
+
 
 def CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT): 
     '''
@@ -215,6 +219,9 @@ def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep):
 
         else: 
             return False, False 
+    
+    else: 
+        return False, False
 
 
 
