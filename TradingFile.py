@@ -64,8 +64,8 @@ def Trading(stock, TradingStrategy, allowHoldsAtTheSameTime, maxBuys, dT, taxFac
 
         elif TradingStrategy == 'BuyAndHold': 
             buy, sell = BuyAndHold(stock, timeStep)
-        elif TradingStrategy == 'ExponentialMovingAverage': 
-            buy, sell = ExponentialMovingAverage(stock, timeStep)
+        # elif TradingStrategy == 'ExponentialMovingAverage': 
+        #     buy, sell = ExponentialMovingAverage(stock, timeStep)
         elif TradingStrategy == 'CrossoverMovingAverage': 
             buy, sell = CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT)
         elif TradingStrategy == 'MeanReversion':
@@ -136,43 +136,42 @@ print(profit)
 
 
 
-# PLOTTING
+# def ShowStock(stock, showZ, dayRangeZ, showMA, dayRange1, dayRange2):
+
+#     plt.plot(stock)
 
 
-plt.plot(stock)
+#     averageList10 = []
+#     averageList5 = []
+#     zScoreList = []
+#     daysList = np.arange(NUMBEROFDAYS) * 1/DT
 
-# DAYSCONSIDERED = 20
+#     for i in range(NUMBEROFDAYS):
 
+#         zScoreList.append(CalculateZScore(stock, i, DT, dayRangeZ))
+#         averageList10.append(CalculateMovingAverage(stock, i, DT, dayRange1, True))
+#         averageList5.append(CalculateMovingAverage(stock, i, DT, dayRange2, True))
 
-# averageList10 = []
-# averageList5 = []
-# zScoreList = []
-# daysList = np.arange(NUMBEROFDAYS) * 1/DT
+#     if showMA: 
+#         plt.plot(daysList, averageList10, label = 'Moving Average, ' + str(dayRange1))
+#         plt.plot(daysList, averageList5, label = 'Moving Average, ' + str(dayRange2))
+#         plt.xlim((dayRange1 * 1/DT, daysList[-1]))
 
-# for i in range(NUMBEROFDAYS):
+#     # plt.scatter(np.where(stock == buyList[0]), buyList[0], color = 'orange', label = 'Buy')
+#     # plt.scatter(sellListIndices[0], stock[sellListIndices[0]], color = 'black', label = 'Sell')
+#     plt.title('Stocks simulated using GBM')
+#     plt.xlabel('Time [h]')
+#     plt.ylabel('Price')
+    
+#     plt.legend()
+#     plt.show()
 
-#     zScoreList.append(CalculateZScore(stock, i, DT, DAYSCONSIDERED))
-#     averageList10.append(CalculateMovingAverage(stock, i, DT, DAYSCONSIDERED, True))
-#     averageList5.append(CalculateMovingAverage(stock, i, DT, 5, True))
-
-
-# plt.plot(daysList, averageList10, label = 'Moving Average, ' + str(DAYSCONSIDERED))
-# plt.plot(daysList, averageList5, label = 'Moving Average, ' + str(5))
-plt.scatter(np.where(stock == buyList[0]), buyList[0], color = 'orange', label = 'Buy')
-plt.scatter(sellListIndices[0], stock[sellListIndices[0]], color = 'black', label = 'Sell')
-# plt.title('Stocks simulated using GBM')
-# plt.xlabel('Time [h]')
-# plt.ylabel('Price')
-# plt.xlim((DAYSCONSIDERED * 1/DT, daysList[-1]))
-plt.legend()
-plt.show()
-
-
-# # plot Z value 
-# plt.plot(daysList, zScoreList, label = 'Z-Score, ' + str(DAYSCONSIDERED))
-# plt.title('Evolution of the Z-Value')
-# plt.xlabel('Time [h]')
-# plt.ylabel('Z-Value')
-# plt.legend()
-# plt.show()
+#     if showZ: 
+#         # plot Z value 
+#         plt.plot(daysList, zScoreList, label = 'Z-Score, ' + str(dayRangeZ))
+#         plt.title('Evolution of the Z-Value')
+#         plt.xlabel('Time [h]')
+#         plt.ylabel('Z-Value')
+#         plt.legend()
+#         plt.show()
 

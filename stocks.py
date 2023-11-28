@@ -108,7 +108,57 @@ def CalculateZScore(stock, dayNo, dT, daysConsidered):
 
 
 
+'''
+PLOTTING
+'''
 
+
+def ShowStock(stock, showZ, dayRangeZ, showMA, dayRangeList):
+
+    plt.plot(stock)
+    daysList = np.arange(NUMBEROFDAYS) * 1/DT
+
+
+
+    if showMA: 
+
+        averageList10 = []
+        averageList5 = []
+
+        for element in dayRangeList: 
+            for i in range(NUMBEROFDAYS):
+                averageList10.append(CalculateMovingAverage(stock, i, DT, element, True))
+                averageList5.append(CalculateMovingAverage(stock, i, DT, element, True))
+
+
+            plt.plot(daysList, averageList10, label = 'Moving Average, ' + str(element))
+            plt.plot(daysList, averageList5, label = 'Moving Average, ' + str(element))
+            plt.xlim((element * 1/DT, daysList[-1]))
+
+    # plt.scatter(np.where(stock == buyList[0]), buyList[0], color = 'orange', label = 'Buy')
+    # plt.scatter(sellListIndices[0], stock[sellListIndices[0]], color = 'black', label = 'Sell')
+    plt.title('Stocks simulated using GBM')
+    plt.xlabel('Time [h]')
+    plt.ylabel('Price')
+    
+    plt.legend()
+    plt.show()
+
+    if showZ: 
+
+        zScoreList = []
+
+        for i in range(NUMBEROFDAYS):
+
+            zScoreList.append(CalculateZScore(stock, i, DT, dayRangeZ))
+
+        # plot Z value 
+        plt.plot(daysList, zScoreList, label = 'Z-Score, ' + str(dayRangeZ))
+        plt.title('Evolution of the Z-Value')
+        plt.xlabel('Time [h]')
+        plt.ylabel('Z-Value')
+        plt.legend()
+        plt.show()
 
 
 

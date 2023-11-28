@@ -39,7 +39,7 @@ def BuyAndHold(stock, timeStep):
 
 
 
-def MovingAverage(stock, timeStep, dayRange, dT): 
+def MovingAverage(stock, timeStep, dayRange, dT, timeFrame): 
     '''
     If we notice an upwards or downwards trend in the moving average, buy (sell).
 
@@ -51,31 +51,77 @@ def MovingAverage(stock, timeStep, dayRange, dT):
     currentDay = int(timeStep * dT)
 
     # if we have not passed 3 days yet, return not buy, not sell
-    if currentDay * 1/dT <= timeStep + (3*1/dT): 
-        return False, False
+    # if timeStep <= (3*1/dT): 
+    #     return False, False
+
+    print('okay, we got further')
 
     # if in the last 3 days, the average went only up, buy 
-    avg1 = CalculateMovingAverage(stock, currentDay-2, dT, dayRange, True)
-    avg2 = CalculateMovingAverage(stock, currentDay-1, dT, dayRange, True)
-    avg3 = CalculateMovingAverage(stock, currentDay, dT, dayRange, True)
+    avgDayList = []
+    for i in range(timeFrame):
+        avgDayList.append(CalculateMovingAverage(stock, currentDay-i, dT, dayRange, True))
+        # avg2 = CalculateMovingAverage(stock, currentDay-1, dT, dayRange, True)
+        # avg3 = CalculateMovingAverage(stock, currentDay, dT, dayRange, True)
 
-    if avg1 < avg2 and avg2 < avg3: 
-        return True, False
+    if None in avgDayList: 
+        return False, False
+
+    # if avg1 < avg2 and avg2 < avg3: 
+    #     return True, False
     
-    elif avg1 > avg2 and avg2 > avg3: 
+    # elif avg1 > avg2 and avg2 > avg3: 
+    #     return False, True
+
+    # in descending order 
+    if avgDayList == sorted(avgDayList, reverse=True):
+        return True, False 
+    
+    # in ascending order
+    elif avgDayList == sorted(avgDayList): 
         return False, True
 
     else: 
         return False, False
 
 
+# test
 
+NUMBEROFDAYS = 300
 
-def ExponentialMovingAverage(stock, timeStep): 
-    '''
+INITIALPRICE = 100  # Initial stock price
+DRIFT = 0.0001       # Drift term
+VOLATILITY = 0.01  # Volatility term
+
+DT = 1/24
+
+stock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+
+buyList = []
+sellList = []
+
+for timeStep in range(len(stock)):
+
+    buy, sell = MovingAverage(stock, timeStep, 10, DT, 3)
+
+    buyList.append(buy)
+    sellList.append(sell)
+
+print(buyList.count(True), buyList.count(False))
+print(sellList.count(True), sellList.count(False))
+
+ShowStock(stock, False, 0, True, [10])
+
+exit()
     
-    '''
-    return True, True 
+
+
+
+
+# def ExponentialMovingAverage(stock, timeStep): 
+#     '''
+    
+#     '''
+#     return True, True 
 
 
 
