@@ -54,8 +54,6 @@ def MovingAverage(stock, timeStep, dayRange, dT, timeFrame):
     # if timeStep <= (3*1/dT): 
     #     return False, False
 
-    print('okay, we got further')
-
     # if in the last 3 days, the average went only up, buy 
     avgDayList = []
     for i in range(timeFrame):
@@ -84,35 +82,6 @@ def MovingAverage(stock, timeStep, dayRange, dT, timeFrame):
         return False, False
 
 
-# test
-
-NUMBEROFDAYS = 300
-
-INITIALPRICE = 100  # Initial stock price
-DRIFT = 0.0001       # Drift term
-VOLATILITY = 0.01  # Volatility term
-
-DT = 1/24
-
-stock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
-
-buyList = []
-sellList = []
-
-for timeStep in range(len(stock)):
-
-    buy, sell = MovingAverage(stock, timeStep, 10, DT, 3)
-
-    buyList.append(buy)
-    sellList.append(sell)
-
-print(buyList.count(True), buyList.count(False))
-print(sellList.count(True), sellList.count(False))
-
-ShowStock(stock, False, 0, True, [10])
-
-exit()
-    
 
 
 
@@ -134,9 +103,7 @@ def CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT):
     We want to make use of short time fluctuations in the market using this strategy 
 
     '''
-    currentPrice = stock[timeStep]
-
-    currentDay = int(timeStep * 1/dT)
+    currentDay = int(timeStep * dT)
 
 
     avgLong1 = CalculateMovingAverage(stock, currentDay, dT, dayRangeLong, True)
@@ -144,6 +111,9 @@ def CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT):
 
     avgShort1 = CalculateMovingAverage(stock, currentDay, dT, dayRangeShort, True)
     avgShort2 = CalculateMovingAverage(stock, currentDay-1, dT, dayRangeShort, True)
+
+    if avgLong1 == None or avgLong2 == None or avgShort1 == None or avgShort2 == None: 
+        return False, False
 
     # if shortrange crosses over longrange, buy 
     if avgShort1 < avgLong1 and avgShort2 > avgLong2: 
@@ -159,6 +129,9 @@ def CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT):
 
 
 
+
+
+
 def MeanReversion(stock, timeStep, dT, dayRange): 
     '''
     -> use Z value 
@@ -167,9 +140,12 @@ def MeanReversion(stock, timeStep, dT, dayRange):
 
     currentPrice = stock[timeStep]
 
-    currentDay = int(timeStep * 1/dT)
+    currentDay = int(timeStep * dT)
 
     zValue = CalculateZScore(stock, currentDay, dT, dayRange)
+
+    if zValue == None: 
+        return False, False
 
     # buy, undervalued
     if zValue < -1.5: 
@@ -183,6 +159,39 @@ def MeanReversion(stock, timeStep, dT, dayRange):
     else: 
         return False, False
         
+
+
+
+
+# test
+
+NUMBEROFDAYS = 300
+
+INITIALPRICE = 100  # Initial stock price
+DRIFT = 0.0001       # Drift term
+VOLATILITY = 0.01  # Volatility term
+
+DT = 1/24
+
+stock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+
+buyList = []
+sellList = []
+
+for timeStep in range(len(stock)):
+    print(timeStep)
+    buy, sell = MeanReversion(stock, timeStep, DT, 10)
+
+    buyList.append(buy)
+    sellList.append(sell)
+
+print(buyList.count(True), buyList.count(False))
+print(sellList.count(True), sellList.count(False))
+
+ShowStock(stock, False, 0, True, [10])
+
+exit()
+
 
 
 

@@ -37,7 +37,7 @@ def Trading(stock, TradingStrategy, allowHoldsAtTheSameTime, maxBuys, dT, taxFac
     sellIndicesList = []
 
     # variables inside function, probably not a good idea 
-    dayRange = 1
+    dayRange = 10
     dayRangeLong = 10
     dayRangeShort = 5
 
@@ -60,7 +60,7 @@ def Trading(stock, TradingStrategy, allowHoldsAtTheSameTime, maxBuys, dT, taxFac
 
         # take a look at all the trading strategies: 
         if TradingStrategy == 'MovingAverage': 
-            buy, sell = MovingAverage(stock, timeStep, dayRange, dT)
+            buy, sell = MovingAverage(stock, timeStep, dayRange, dT, 20)
 
         elif TradingStrategy == 'BuyAndHold': 
             buy, sell = BuyAndHold(stock, timeStep)

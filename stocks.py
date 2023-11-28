@@ -85,7 +85,7 @@ def CalculateZScore(stock, dayNo, dT, daysConsidered):
     Z score under -1.5 indicates undervalued -> buy 
     '''
 
-    if dayNo < daysConsidered: 
+    if dayNo < daysConsidered+1: 
         return None
 
     mean = CalculateMovingAverage(stock, dayNo, dT, daysConsidered, False)
@@ -122,18 +122,20 @@ def ShowStock(stock, showZ, dayRangeZ, showMA, dayRangeList):
 
     if showMA: 
 
-        averageList10 = []
-        averageList5 = []
+
 
         for element in dayRangeList: 
+            averageList10 = []
+            averageList5 = []
+
             for i in range(NUMBEROFDAYS):
                 averageList10.append(CalculateMovingAverage(stock, i, DT, element, True))
                 averageList5.append(CalculateMovingAverage(stock, i, DT, element, True))
 
 
             plt.plot(daysList, averageList10, label = 'Moving Average, ' + str(element))
-            plt.plot(daysList, averageList5, label = 'Moving Average, ' + str(element))
-            plt.xlim((element * 1/DT, daysList[-1]))
+        
+        plt.xlim((element * 1/DT, daysList[-1]))
 
     # plt.scatter(np.where(stock == buyList[0]), buyList[0], color = 'orange', label = 'Buy')
     # plt.scatter(sellListIndices[0], stock[sellListIndices[0]], color = 'black', label = 'Sell')
