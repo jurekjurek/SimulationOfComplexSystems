@@ -39,12 +39,15 @@ def BuyAndHold(stock, timeStep):
 
 
 
-def MovingAverage(stock, timeStep, dayRange, dT, timeFrame): 
+def MovingAverage(stock, timeStep): 
     '''
     If we notice an upwards or downwards trend in the moving average, buy (sell).
 
     return: Two booleans, indicating if we want to sell or buy
     '''
+    dayRange = 10
+    dT = 1/24
+    timeFrame = 3
 
     currentPrice = stock[timeStep]
 
@@ -57,7 +60,7 @@ def MovingAverage(stock, timeStep, dayRange, dT, timeFrame):
     # if in the last 3 days, the average went only up, buy 
     avgDayList = []
     for i in range(timeFrame):
-        avgDayList.append(CalculateMovingAverage(stock, currentDay-i, dT, dayRange, True))
+        avgDayList.append(CalculateMovingAverage(stock, currentDay-i, dT, dayRange, False))
         # avg2 = CalculateMovingAverage(stock, currentDay-1, dT, dayRange, True)
         # avg3 = CalculateMovingAverage(stock, currentDay, dT, dayRange, True)
 
@@ -96,13 +99,19 @@ def MovingAverage(stock, timeStep, dayRange, dT, timeFrame):
 
 
 
-def CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT): 
+def CrossOverMovingAverage(stock, timeStep): 
     '''
     Use short term and long term average and buy if they cross 
 
     We want to make use of short time fluctuations in the market using this strategy 
 
     '''
+    dayRangeLong = 20
+    dayRangeShort = 5
+    dT = 1/24
+
+
+
     currentDay = int(timeStep * dT)
 
 
@@ -116,11 +125,11 @@ def CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT):
         return False, False
 
     # if shortrange crosses over longrange, buy 
-    if avgShort1 < avgLong1 and avgShort2 > avgLong2: 
+    if avgShort1 > avgLong1 and avgShort2 < avgLong2: 
         return True, False 
 
     # if shortrange crosses under longrange, sell 
-    elif avgShort1 > avgLong1 and avgShort2 < avgLong2: 
+    elif avgShort1 < avgLong1 and avgShort2 > avgLong2: 
         return False, True 
 
     else: 
@@ -132,11 +141,13 @@ def CrossOverMovingAverage(stock, timeStep, dayRangeLong, dayRangeShort, dT):
 
 
 
-def MeanReversion(stock, timeStep, dT, dayRange): 
+def MeanReversion(stock, timeStep): 
     '''
     -> use Z value 
 
     '''
+    dayRange = 10
+    dT = 1/24
 
     currentPrice = stock[timeStep]
 
@@ -168,7 +179,7 @@ def MeanReversion(stock, timeStep, dT, dayRange):
 
 
 
-def RangeTrading(stock, dayRange, dT, rangeLimit, offset, timeStep):
+def RangeTrading(stock, timeStep):
     '''
     if the Stock is clearly  - only shortterm!!! - between a min and a max value for the last x timesteps -> buy when high in this range 
     sell when break out of range... (some indicators exist ... )
@@ -179,6 +190,11 @@ def RangeTrading(stock, dayRange, dT, rangeLimit, offset, timeStep):
     offset is distance from limit. If limit - offset is the current price, we buy. Else we do not. 
 
     '''
+    dayRange = 10
+    dT = 1/24
+    rangeLimit = 10
+    offset = 0.1 
+    
 
     currentPrice = stock[timeStep]
 
@@ -221,17 +237,22 @@ def RangeTrading(stock, dayRange, dT, rangeLimit, offset, timeStep):
 
 
 
-def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep, otherUpperLimit): 
+def BreakOut(stock, timeStep): 
     ''''
     Again, a range between min and max. 
     And here, if the stock breaks out above the max, buy and sell as soon as it falls again. 
 
 
-
+    For this, somehow the agent has to decide on what to do 
 
 
     You have to check this again!!!!
     '''
+    dayRange = 10
+    dT = 1/24
+    rangeLimit = 10
+    offset = 0.1
+    otherUpperLimit = 1 
 
     currentPrice = stock[timeStep]
 
@@ -308,13 +329,17 @@ def BreakOut(stock, dayRange, dT, rangeLimit, offset, timeStep, otherUpperLimit)
 
 
 
-def ReversalTrading(stock, timeStep, timeA, timeB): 
+def ReversalTrading(stock, timeStep): 
     '''
     If it has been falling for a long time and now starts rising again -> buy 
 
     Essentially the same as scalping somehow
 
     '''
+    timeA = 10
+    timeB = 10
+
+
     buy = True
     sell = True
 
@@ -336,16 +361,17 @@ def ReversalTrading(stock, timeStep, timeA, timeB):
 
     return buy, sell
 
-# 10 works as timeA and timeB for ReversalTrading
 
 
 
 
-def BuyMorningSellNight(stock, timeStep, dT): 
+def BuyMorningSellNight(stock, timeStep): 
     '''
     Easy strategy where we buy every morning and sell every night 
     '''
-    dayLength = int(len(stock) / NUMBEROFDAYS)
+    numberOfDays = 300
+
+    dayLength = int(len(stock) / numberOfDays)
 
     buy = False
     sell = False
@@ -364,11 +390,12 @@ def BuyMorningSellNight(stock, timeStep, dT):
 
 
 
-def BuyAndSellRandomly(stock, timeStep, thresHoldProbability): 
+def BuyAndSellRandomly(stock, timeStep): 
     '''
     Buy at random times and sell at random times. 
     Independent of the timestep or anything else. 
     '''
+    thresHoldProbability = 0.2
 
     randomNumberBuy = random.random()
     randomNumberSell = random.random()
@@ -390,7 +417,7 @@ def BuyAndSellRandomly(stock, timeStep, thresHoldProbability):
 
 
 
-def Scalping(stock, timeStep, timeA, timeB): 
+def Scalping(stock, timeStep): 
     '''
     stock has been rising for a certain short time (timeA)  -> buy 
     stock has been rising for a long time (timeB)           -> sell
@@ -399,6 +426,8 @@ def Scalping(stock, timeStep, timeA, timeB):
 
     timeA and timeB could be around 10 timesteps
     '''
+    timeA = 10 
+    timeB = 10 
 
     buy = True
     sell = True

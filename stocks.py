@@ -2,15 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-# global variables 
-NUMBEROFDAYS = 300
 
-INITIALPRICE = 100  # Initial stock price
-DRIFT = 0.0001       # Drift term
-VOLATILITY = 0.01  # Volatility term
-NUMBEROFSIMULATIONS = 5  # Number of simulations
-
-DT = 1/24
 
 
 
@@ -113,10 +105,10 @@ PLOTTING
 '''
 
 
-def ShowStock(stock, showZ, dayRangeZ, showMA, dayRangeList):
+def ShowStock(stock, showZ, dayRangeZ, showMA, dayRangeList, numberOfDays, dT):
 
     plt.plot(stock)
-    daysList = np.arange(NUMBEROFDAYS) * 1/DT
+    daysList = np.arange(numberOfDays) * 1/dT
 
 
 
@@ -128,14 +120,14 @@ def ShowStock(stock, showZ, dayRangeZ, showMA, dayRangeList):
             averageList10 = []
             averageList5 = []
 
-            for i in range(NUMBEROFDAYS):
-                averageList10.append(CalculateMovingAverage(stock, i, DT, element, True))
-                averageList5.append(CalculateMovingAverage(stock, i, DT, element, True))
+            for i in range(numberOfDays):
+                averageList10.append(CalculateMovingAverage(stock, i, dT, element, False))
+                averageList5.append(CalculateMovingAverage(stock, i, dT, element, False))
 
 
             plt.plot(daysList, averageList10, label = 'Moving Average, ' + str(element))
         
-        plt.xlim((element * 1/DT, daysList[-1]))
+        plt.xlim((element * 1/dT, daysList[-1]))
 
     # plt.scatter(np.where(stock == buyList[0]), buyList[0], color = 'orange', label = 'Buy')
     # plt.scatter(sellListIndices[0], stock[sellListIndices[0]], color = 'black', label = 'Sell')
@@ -150,9 +142,9 @@ def ShowStock(stock, showZ, dayRangeZ, showMA, dayRangeList):
 
         zScoreList = []
 
-        for i in range(NUMBEROFDAYS):
+        for i in range(numberOfDays):
 
-            zScoreList.append(CalculateZScore(stock, i, DT, dayRangeZ))
+            zScoreList.append(CalculateZScore(stock, i, dT, dayRangeZ))
 
         # plot Z value 
         plt.plot(daysList, zScoreList, label = 'Z-Score, ' + str(dayRangeZ))

@@ -1,34 +1,61 @@
 '''
 Write class for agent 
 '''
+from TradingStrategies import *
+
 
 class Agent:
-    def __init__(self, initial_money, trading_strategy, stock):
+    def __init__(self, initial_money, trading_strategy, stock, oneBuyOnly):
         self.money = initial_money
-        self.portfolio = {}  # Dictionary to store stock holdings, e.g., {'AAPL': 10, 'GOOGL': 5}
+
+        # portfolio right now is just a counter of stocks held 
+        self.portfolio = [] #{}  # Dictionary to store stock holdings, e.g., {'AAPL': 10, 'GOOGL': 5}
         self.trading_strategy = trading_strategy
         self.stock = stock
+        self.taxFactor = 0.25
+        self.oneBuyOnly = oneBuyOnly
+        
+        # buy and sell list for agent to check when they bought and sold, keep track of timesteps
+        self.buyList = []
+        self.sellList = []
 
-    def take_action(self, timeStep, available_stocks):
-        buy, sell = self.trading_strategy.decide_action(timeStep, self.money, self.portfolio, available_stocks)
+    def take_action(self, timeStep, stock):
+        buy, sell = self.trading_strategy(stock, timeStep)
         if buy == True:
-            self.buy(self.stock, timeStep)
+            self.buy(stock, timeStep)
         elif sell == True:
-            self.sell(self.stock, timeStep)
+            self.sell(stock, timeStep, self.taxFactor)
 
-    def buy(self, stock, quantity, current_price):
-        cost = quantity * current_price
-        if self.money >= cost:
-            self.money -= cost
-            if stock in self.portfolio:
-                self.portfolio[stock] += quantity
-            else:
-                self.portfolio[stock] = quantity
+    def buy(self, stock, timeStep):
+        currentPrice = stock[timeStep]
+        if self.oneBuyOnly == True and len(self.portfolio) >= 1: 
+            return 
 
-    def sell(self, stock, quantity, current_price):
-        if stock in self.portfolio and self.portfolio[stock] >= quantity:
-            revenue = quantity * current_price
-            self.money += revenue
-            self.portfolio[stock] -= quantity
-            if self.portfolio[stock] == 0:
-                del self.portfolio[stock]
+        if self.money >= currentPrice:
+            self.money -= currentPrice
+
+            # increase number of stocks held by one 
+            self.portfolio.append(currentPrice)
+
+            self.buyList.append(timeStep)
+        else: 
+            print('No money left to make this transaction.')
+
+    def sell(self, stock, timeStep, taxFactor):
+        if self.portfolio != []:
+            currentPrice = stock[timeStep]
+
+            profit = currentPrice - self.portfolio[0]
+
+            if profit > 0: 
+                self.money += self.portfolio[0] + profit * (1-taxFactor)
+
+            else: 
+
+                self.money += currentPrice
+
+            # erase the stock from the portfolio 
+
+            del self.portfolio[0]
+
+            self.sellList.append(timeStep)
