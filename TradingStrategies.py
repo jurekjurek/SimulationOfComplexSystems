@@ -395,7 +395,7 @@ def BuyAndSellRandomly(stock, timeStep):
     Buy at random times and sell at random times. 
     Independent of the timestep or anything else. 
     '''
-    thresHoldProbability = 0.2
+    thresHoldProbability = 0.01
 
     randomNumberBuy = random.random()
     randomNumberSell = random.random()
@@ -426,8 +426,8 @@ def Scalping(stock, timeStep):
 
     timeA and timeB could be around 10 timesteps
     '''
-    timeA = 10 
-    timeB = 10 
+    timeA = 5 #10
+    timeB = 5 #10
 
     buy = True
     sell = True

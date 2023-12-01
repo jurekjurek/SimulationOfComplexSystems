@@ -5,15 +5,16 @@ from TradingStrategies import *
 
 
 class Agent:
-    def __init__(self, initial_money, trading_strategy, stock, oneBuyOnly):
+    def __init__(self, initial_money, trading_strategy, stock, holdsAtOnce):
         self.money = initial_money
+        print('Agent says: I have ', initial_money)
 
         # portfolio right now is just a counter of stocks held 
         self.portfolio = [] #{}  # Dictionary to store stock holdings, e.g., {'AAPL': 10, 'GOOGL': 5}
         self.trading_strategy = trading_strategy
-        self.stock = stock
+        # self.stock = stock
         self.taxFactor = 0.25
-        self.oneBuyOnly = oneBuyOnly
+        self.holdsAtOnce = holdsAtOnce
         
         # buy and sell list for agent to check when they bought and sold, keep track of timesteps
         self.buyList = []
@@ -28,7 +29,9 @@ class Agent:
 
     def buy(self, stock, timeStep):
         currentPrice = stock[timeStep]
-        if self.oneBuyOnly == True and len(self.portfolio) >= 1: 
+
+        # if there are more stocks in our portfolio than stocks we can hold at once 
+        if len(self.portfolio) >= self.holdsAtOnce: 
             return 
 
         if self.money >= currentPrice:
@@ -38,8 +41,8 @@ class Agent:
             self.portfolio.append(currentPrice)
 
             self.buyList.append(timeStep)
-        else: 
-            print('No money left to make this transaction.')
+        # else: 
+            # print('No money left to make this transaction.')
 
     def sell(self, stock, timeStep, taxFactor):
         if self.portfolio != []:

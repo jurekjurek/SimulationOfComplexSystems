@@ -105,7 +105,7 @@ PLOTTING
 '''
 
 
-def ShowStock(stock, showZ, dayRangeZ, showMA, dayRangeList, numberOfDays, dT):
+def ShowStock(stock, showZ, dayRangeZ, showMA, dayRangeList, numberOfDays, dT, title):
 
     plt.plot(stock)
     daysList = np.arange(numberOfDays) * 1/dT
@@ -131,7 +131,7 @@ def ShowStock(stock, showZ, dayRangeZ, showMA, dayRangeList, numberOfDays, dT):
 
     # plt.scatter(np.where(stock == buyList[0]), buyList[0], color = 'orange', label = 'Buy')
     # plt.scatter(sellListIndices[0], stock[sellListIndices[0]], color = 'black', label = 'Sell')
-    plt.title('Stocks simulated using GBM')
+    plt.title(title)
     plt.xlabel('Time [h]')
     plt.ylabel('Price')
     
