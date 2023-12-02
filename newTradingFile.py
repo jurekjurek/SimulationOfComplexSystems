@@ -48,80 +48,107 @@ def MainSimulation(initialMoney, tradingStrategy, show):
     print('current money after trading: ', agent.money)
 
 
-# def CompareTradingStrategies(): 
-#     '''
-#     In this function, we compare trading strategies to each other. 
-#     We have a parameter holdsAtOnce which indicates how many stocks an agent can hold at the same time 
-#     '''
-
-
-# MainSimulation(INITIALMONEY, BuyAndSellRandomly, True)
+# MainSimulation(INITIALMONEY, BreakOut, True)
 
 
 
-def CompareTradingStrategies(initialMoney, holdsAtOnce): 
+def CompareTradingStrategies(initialMoney, holdsAtOnce, numberOfAverages): 
 
     # one stock (for now, only one) that all agents with all different trading strategies will follow 
     globalStock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
 
-    # define different agents for all 10 (9) trading strategies: 
+    stockList = []
+    for i in range(numberOfAverages): 
 
-    agentBAH = Agent(initialMoney, BuyAndHold, globalStock, holdsAtOnce=holdsAtOnce)
+        stockList.append(GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT))
 
-    agentMA = Agent(initialMoney, MovingAverage, globalStock, holdsAtOnce=holdsAtOnce)
-
-    agentCO = Agent(initialMoney, CrossOverMovingAverage, globalStock, holdsAtOnce=holdsAtOnce)
-
-    agentMR = Agent(initialMoney, MeanReversion, globalStock, holdsAtOnce=holdsAtOnce)
-
-    agentRT = Agent(initialMoney, RangeTrading, globalStock, holdsAtOnce=holdsAtOnce)
-
-    agentBO = Agent(initialMoney, BreakOut, globalStock, holdsAtOnce=holdsAtOnce)
-
-    agentRV = Agent(initialMoney, ReversalTrading, globalStock, holdsAtOnce=holdsAtOnce)
-
-    agentMN = Agent(initialMoney, BuyMorningSellNight, globalStock, holdsAtOnce=holdsAtOnce)
-
-    agentSC = Agent(initialMoney, Scalping, globalStock, holdsAtOnce=holdsAtOnce)
-
-    agentRandom = Agent(initialMoney, BuyAndSellRandomly, globalStock, holdsAtOnce=holdsAtOnce)  
-
-    agentList = [agentBAH, agentMA, agentCO, agentMR, agentRT, agentRV, agentMN, agentSC, agentRandom]
+    # all the trading strategies
+    namesList = ['BuyAndHold', 'MovingAverage', 'Crossover', 'MeanReversion', 'Rangetrading', 'BO', 'MorningNight', 'Scalping', 'Random'] 
 
 
     # list to store the profits that certain agents make following a certain strategy 
-    profitList = []
+    profitList = np.zeros(len(namesList))
 
-    for timeStep in range(len(globalStock)):
+    # iterate over the different stocks: 
+    for globalStock in stockList:
 
-        for agent in agentList: 
+        # define different agents for all 10 (9) trading strategies: 
 
-            agent.take_action(timeStep, globalStock)
+        agentBAH = Agent(initialMoney, BuyAndHold, globalStock, holdsAtOnce=holdsAtOnce)
+
+        agentMA = Agent(initialMoney, MovingAverage, globalStock, holdsAtOnce=holdsAtOnce)
+
+        agentCO = Agent(initialMoney, CrossOverMovingAverage, globalStock, holdsAtOnce=holdsAtOnce)
+
+        agentMR = Agent(initialMoney, MeanReversion, globalStock, holdsAtOnce=holdsAtOnce)
+
+        agentRT = Agent(initialMoney, RangeTrading, globalStock, holdsAtOnce=holdsAtOnce)
+
+        agentBO = Agent(initialMoney, BreakOut, globalStock, holdsAtOnce=holdsAtOnce)
+
+        agentMN = Agent(initialMoney, BuyMorningSellNight, globalStock, holdsAtOnce=holdsAtOnce)
+
+        agentSC = Agent(initialMoney, Scalping, globalStock, holdsAtOnce=holdsAtOnce)
+
+        agentRandom = Agent(initialMoney, BuyAndSellRandomly, globalStock, holdsAtOnce=holdsAtOnce)  
+
+        agentList = [agentBAH, agentMA, agentCO, agentMR, agentRT, agentBO, agentMN, agentSC, agentRandom]
 
         
-    for agent in agentList: 
 
-        while len(agent.sellList) < len(agent.buyList): 
-            agent.sell(globalStock, timeStep, agent.taxFactor)
-        
-        profitList.append(agent.money - initialMoney)
+
+
+        for timeStep in range(len(globalStock)):
+
+            for agent in agentList: 
+
+                agent.take_action(timeStep, globalStock)
+
+            
+        for agentNo in range(len(agentList)): 
+
+            agent = agentList[agentNo]
+
+            while len(agent.sellList) < len(agent.buyList): 
+                agent.sell(globalStock, timeStep, agent.taxFactor)
+            
+            profitList[agentNo] += (agent.money - initialMoney)
+
+            # plot stuff that is better than BuyAndHold
+
+            # if profitList[-1] > profitList[0]: 
+
+            #     for i in range(len(agent.buyList)):
+            #         plt.scatter(agent.buyList[i], globalStock[agent.buyList[i]], s= 200, color = 'red')#, label = 'Buy')
+            #         plt.scatter(agent.sellList[i], globalStock[agent.sellList[i]], s=200, color = 'green')#, label = 'Sell')
+            #     ShowStock(globalStock, False, 0, False, [5, 20], NUMBEROFDAYS, DT, 'Profit: ' + str(agent.money - initialMoney) + ' ' + namesList[agentNo])
+            #     # plt.plot(stock)
+            #     # plt.legend()
+            #     plt.show()
+    
+    # after iteration of stocks is done, average over number 
+    profitList = profitList / numberOfAverages
 
 
     # show a histogram of money of agents: 
 
-    print(profitList)
+    colors = []
 
-    namesList = ['BuyAndHold', 'MovingAverage', 'Crossover', 'MeanReversion', 'Rangetrading', 'Reversal', 'MorningNight', 'Scalping', 'Random']
+    for i in (profitList): 
+        if i >= 0: 
+            colors.append('green')
+        else: 
+            colors.append('red')
 
-    plt.bar(namesList ,profitList)
+    bars = plt.bar(namesList ,profitList, color = colors)
     plt.title('Comparison of profits with different trading strategies')
     plt.ylabel('Profit')
-    plt.xlabel('Trading Strategy')
-    plt.xticks(fontsize = 5)
+    # plt.xlabel('Trading Strategy')
+    plt.xticks(rotation = 45, fontsize = 8)
     plt.show()
 
 
-CompareTradingStrategies(1000, 10)
+CompareTradingStrategies(1000, 5, 100)
 
 
 

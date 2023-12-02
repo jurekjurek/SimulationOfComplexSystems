@@ -238,20 +238,19 @@ def BreakOut(stock, timeStep):
 
 
     For this, somehow the agent has to decide on what to do 
-
-
-    You have to check this again!!!!
     '''
     dayRange = 10
     dT = 1/24
     rangeLimit = 10
     offset = 0.1
-    otherUpperLimit = 1 
+
+    # very low, so that we never go under it 
+    otherUpperLimit = -1000
 
     currentPrice = stock[timeStep]
 
     if int(dayRange * 1/dT) > timeStep: 
-        return False, False, currentPrice * 10e6
+        return False, False
             
     # we want to break out of the range!! 
     arrayOfInterest = stock[timeStep - int(dayRange * 1/dT): timeStep]
@@ -268,16 +267,16 @@ def BreakOut(stock, timeStep):
 
         # if currentprice is within offset away from upper limit -> sell 
         if currentPrice > upperLimit:
-            return True, False, upperLimit
+            return True, False
 
         elif currentPrice <= otherUpperLimit: 
-            return False, True, upperLimit
+            return False, True
 
         else: 
-            return False, False, upperLimit
+            return False, False
     
     else: 
-        return False, False, upperLimit
+        return False, False
 
 
 # EXAMPLE FOR BREAKOUTTRADING
@@ -324,39 +323,39 @@ def BreakOut(stock, timeStep):
 
 
 
-# 7
+# # 7
 
-def ReversalTrading(stock, timeStep): 
-    '''
-    If it has been falling for a long time and now starts rising again -> buy 
+# def ReversalTrading(stock, timeStep): 
+#     '''
+#     If it has been falling for a long time and now starts rising again -> buy 
 
-    Essentially the same as scalping somehow
+#     Essentially the same as scalping somehow
 
-    '''
-    timeA = 10
-    timeB = 10
+#     '''
+#     timeA = 10
+#     timeB = 10
 
 
-    buy = True
-    sell = True
+#     buy = True
+#     sell = True
 
-    for i in range(timeA): 
-        # if stock has not been constantly increasing in the last timeA timesteps, we do not buy 
-        if not stock[timeStep - i] > stock[timeStep - (i+1)]: 
-            buy = False
-        else: 
-            continue
+#     for i in range(timeA): 
+#         # if stock has not been constantly increasing in the last timeA timesteps, we do not buy 
+#         if not stock[timeStep - i] > stock[timeStep - (i+1)]: 
+#             buy = False
+#         else: 
+#             continue
         
-    for j in range(timeB): 
-        # if stock has not been constantly decreasing in the last timeB timesteps, we do not sell
-        if not stock[timeStep - j] < stock[timeStep - (j+1)]:
-            sell = False
+#     for j in range(timeB): 
+#         # if stock has not been constantly decreasing in the last timeB timesteps, we do not sell
+#         if not stock[timeStep - j] < stock[timeStep - (j+1)]:
+#             sell = False
 
-        else: 
-            continue
+#         else: 
+#             continue
 
 
-    return buy, sell
+#     return buy, sell
 
 
 
