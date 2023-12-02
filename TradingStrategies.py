@@ -1,6 +1,9 @@
 from stocks import * 
 import random
 
+
+# 1
+
 def BuyAndHold(stock, timeStep): 
     '''
     given a stock over a certain number of days 
@@ -37,7 +40,7 @@ def BuyAndHold(stock, timeStep):
 
 
 
-
+# 2
 
 def MovingAverage(stock, timeStep): 
     '''
@@ -88,16 +91,7 @@ def MovingAverage(stock, timeStep):
 
 
 
-
-# def ExponentialMovingAverage(stock, timeStep): 
-#     '''
-    
-#     '''
-#     return True, True 
-
-
-
-
+# 3
 
 def CrossOverMovingAverage(stock, timeStep): 
     '''
@@ -139,7 +133,7 @@ def CrossOverMovingAverage(stock, timeStep):
 
 
 
-
+# 4
 
 def MeanReversion(stock, timeStep): 
     '''
@@ -177,7 +171,7 @@ def MeanReversion(stock, timeStep):
 
 
 
-
+# 5
 
 def RangeTrading(stock, timeStep):
     '''
@@ -235,7 +229,7 @@ def RangeTrading(stock, timeStep):
 # offset of 0.1 euro works well for above 
 
 
-
+# 6
 
 def BreakOut(stock, timeStep): 
     ''''
@@ -329,6 +323,9 @@ def BreakOut(stock, timeStep):
 
 
 
+
+# 7
+
 def ReversalTrading(stock, timeStep): 
     '''
     If it has been falling for a long time and now starts rising again -> buy 
@@ -363,7 +360,7 @@ def ReversalTrading(stock, timeStep):
 
 
 
-
+# 8
 
 def BuyMorningSellNight(stock, timeStep): 
     '''
@@ -388,7 +385,7 @@ def BuyMorningSellNight(stock, timeStep):
 
 
 
-
+# 9
 
 def BuyAndSellRandomly(stock, timeStep): 
     '''
@@ -415,7 +412,7 @@ def BuyAndSellRandomly(stock, timeStep):
 
 
 
-
+# 10
 
 def Scalping(stock, timeStep): 
     '''
