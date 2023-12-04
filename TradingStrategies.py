@@ -49,7 +49,7 @@ def MovingAverage(stock, timeStep):
     return: Two booleans, indicating if we want to sell or buy
     '''
     dayRange = 10
-    dT = 1/24
+    dT = DT
     timeFrame = 3
 
     currentPrice = stock[timeStep]
@@ -102,7 +102,7 @@ def CrossOverMovingAverage(stock, timeStep):
     '''
     dayRangeLong = 20
     dayRangeShort = 5
-    dT = 1/24
+    dT = DT
 
 
 
@@ -141,7 +141,7 @@ def MeanReversion(stock, timeStep):
 
     '''
     dayRange = 10
-    dT = 1/24
+    dT = DT
 
     currentPrice = stock[timeStep]
 
@@ -185,7 +185,7 @@ def RangeTrading(stock, timeStep):
 
     '''
     dayRange = 10
-    dT = 1/24
+    dT = DT
     rangeLimit = 10
     offset = 0.1 
     
@@ -240,7 +240,7 @@ def BreakOut(stock, timeStep):
     For this, somehow the agent has to decide on what to do 
     '''
     dayRange = 10
-    dT = 1/24
+    dT = DT
     rangeLimit = 10
     offset = 0.1
 
@@ -365,7 +365,7 @@ def BuyMorningSellNight(stock, timeStep):
     '''
     Easy strategy where we buy every morning and sell every night 
     '''
-    numberOfDays = 300
+    numberOfDays = NUMBEROFDAYS
 
     dayLength = int(len(stock) / numberOfDays)
 

@@ -2,14 +2,14 @@ from TradingStrategies import *
 from stocks import *
 from AgentClass import * 
 
-
+from stocks import *
 # global variables 
-NUMBEROFDAYS = 10
+# NUMBEROFDAYS = 50
 
-INITIALPRICE = 100  # Initial stock price
-DRIFT = 0.0001       # Drift term
-VOLATILITY = 0.01  # Volatility term
-NUMBEROFSIMULATIONS = 5  # Number of simulations
+# INITIALPRICE = 100  # Initial stock price
+# DRIFT = 0.0001       # Drift term
+# VOLATILITY = 0.01  # Volatility term
+# NUMBEROFSIMULATIONS = 5  # Number of simulations
 
 # update every minute
 DT = 1/(24*60)
@@ -61,7 +61,7 @@ def MainSimulation(initialMoney, tradingStrategy, show):
 
 
 
-def CompareTradingStrategies(stockList, initialMoney, holdsAtOnce, numberOfAverages): 
+def CompareTradingStrategies(stockList, initialMoney, holdsAtOnce, numberOfAverages, barWidth, label): 
     '''
     We only use the short term trading strategies here. 
     '''
@@ -69,7 +69,7 @@ def CompareTradingStrategies(stockList, initialMoney, holdsAtOnce, numberOfAvera
     # globalStock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
 
     # all the trading strategies
-    namesList = ['BuyAndHold', 'MovingAverage', 'Crossover', 'MeanReversion', 'Rangetrading', 'BO', 'MorningNight', 'Scalping', 'Random'] 
+    namesList = ['BuyAndHold', 'Rangetrading', 'BO', 'Scalping', 'Random'] 
 
 
     # list to store the profits that certain agents make following a certain strategy 
@@ -82,23 +82,15 @@ def CompareTradingStrategies(stockList, initialMoney, holdsAtOnce, numberOfAvera
 
         agentBAH = Agent(initialMoney, BuyAndHold, globalStock, holdsAtOnce=holdsAtOnce)
 
-        agentMA = Agent(initialMoney, MovingAverage, globalStock, holdsAtOnce=holdsAtOnce)
-
-        agentCO = Agent(initialMoney, CrossOverMovingAverage, globalStock, holdsAtOnce=holdsAtOnce)
-
-        agentMR = Agent(initialMoney, MeanReversion, globalStock, holdsAtOnce=holdsAtOnce)
-
         agentRT = Agent(initialMoney, RangeTrading, globalStock, holdsAtOnce=holdsAtOnce)
 
         agentBO = Agent(initialMoney, BreakOut, globalStock, holdsAtOnce=holdsAtOnce)
-
-        agentMN = Agent(initialMoney, BuyMorningSellNight, globalStock, holdsAtOnce=holdsAtOnce)
 
         agentSC = Agent(initialMoney, Scalping, globalStock, holdsAtOnce=holdsAtOnce)
 
         agentRandom = Agent(initialMoney, BuyAndSellRandomly, globalStock, holdsAtOnce=holdsAtOnce)  
 
-        agentList = [agentBAH, agentMA, agentCO, agentMR, agentRT, agentBO, agentMN, agentSC, agentRandom]
+        agentList = [agentBAH, agentRT, agentBO, agentSC, agentRandom]
 
         
 
@@ -140,33 +132,38 @@ def CompareTradingStrategies(stockList, initialMoney, holdsAtOnce, numberOfAvera
 
     colors = []
 
-    for i in (profitList): 
-        if i >= 0: 
-            colors.append('green')
-        else: 
-            colors.append('red')
+    if label == 'high dT':
+        for i in (profitList): 
+            # if i >= 0: 
+            colors.append('forestgreen')
+            # else: 
+            #     colors.append('red')
+    else: 
+        for i in (profitList): 
+            # if i >= 0: 
+            colors.append('limegreen')
+            # else: 
+            #     colors.append('orange')
 
-    bars = plt.bar(namesList ,profitList, color = colors)
+    bars = plt.bar(namesList ,profitList, color = colors, width = barWidth, label = label)
     plt.title('Comparison of profits with different trading strategies')
     plt.ylabel('Profit')
     # plt.xlabel('Trading Strategy')
     plt.xticks(rotation = 45, fontsize = 8)
-    plt.show()
+    plt.legend()
+    # plt.show()
 
 
-NUMBEROFAVERAGES = 5
+NUMBEROFAVERAGES = 30
 
 # generate the two stocklists 
 stockListSmallDt = []
 stockListHighDt = []
 
 for i in range(NUMBEROFAVERAGES): 
-    DT = 1/(24*60)
 
     # every minute
     stockListSmallDt.append(GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT))
-
-    DT = 1/24
 
     # every hour
     stockListHighDt.append(stockListSmallDt[i][::60])
@@ -174,7 +171,12 @@ for i in range(NUMBEROFAVERAGES):
 
 
 
-CompareTradingStrategies(stockListSmallDt ,1000, 1, NUMBEROFAVERAGES)
-CompareTradingStrategies(stockListHighDt ,1000, 1, NUMBEROFAVERAGES)
+CompareTradingStrategies(stockListSmallDt, 1000, 1, NUMBEROFAVERAGES, 0.7, 'high dT')
 
+
+
+DT = 1/24
+CompareTradingStrategies(stockListHighDt, 1000, 1, NUMBEROFAVERAGES, 0.5, 'small dT')
+
+plt.show()
 

@@ -3,7 +3,15 @@ import matplotlib.pyplot as plt
 
 
 
+# global variables 
+NUMBEROFDAYS = 100
 
+INITIALPRICE = 100  # Initial stock price
+DRIFT = 0.00045       # Drift term
+VOLATILITY = 0.01  # Volatility term
+NUMBEROFSIMULATIONS = 5  # Number of simulations
+
+DT = 1/24
 
 
 def GenerateStocks(initialPrice, drift, volatility, numDays, dT):

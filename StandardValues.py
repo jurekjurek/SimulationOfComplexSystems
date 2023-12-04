@@ -9,15 +9,15 @@ def calculate_average_return_and_volatility(stock_symbol, start_date, end_date):
     daily_returns = stock_data['Adj Close'].pct_change().dropna()
 
     
-    average_return = daily_returns.mean() * 252
+    average_return = daily_returns.mean() 
 
     
-    volatility = daily_returns.std() * np.sqrt(252)
+    volatility = daily_returns.std() 
 
     return average_return, volatility
 
 
-stock_symbol = '^GSPC'
+stock_symbol = 'AAPL'
 start_date = '2020-01-01'
 end_date = '2023-01-01'
 
