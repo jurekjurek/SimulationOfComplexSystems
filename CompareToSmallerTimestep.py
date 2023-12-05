@@ -69,7 +69,7 @@ def CompareTradingStrategies(stockList, initialMoney, holdsAtOnce, numberOfAvera
     # globalStock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
 
     # all the trading strategies
-    namesList = ['BuyAndHold', 'Rangetrading', 'BO', 'Scalping', 'Random'] 
+    namesList = ['BH', 'RT', 'BO', 'SC', 'RD'] 
 
 
     # list to store the profits that certain agents make following a certain strategy 
@@ -154,7 +154,7 @@ def CompareTradingStrategies(stockList, initialMoney, holdsAtOnce, numberOfAvera
     # plt.show()
 
 
-NUMBEROFAVERAGES = 30
+NUMBEROFAVERAGES = 100
 
 # generate the two stocklists 
 stockListSmallDt = []

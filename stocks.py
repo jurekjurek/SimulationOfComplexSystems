@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 
 
 # global variables 
-NUMBEROFDAYS = 100
+NUMBEROFDAYS = 50
 
 INITIALPRICE = 100  # Initial stock price
-DRIFT = 0.00045       # Drift term
-VOLATILITY = 0.01  # Volatility term
+DRIFT = 0.000456       # Drift term
+VOLATILITY = 0.0087  # Volatility term
 NUMBEROFSIMULATIONS = 5  # Number of simulations
 
 DT = 1/24

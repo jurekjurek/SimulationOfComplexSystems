@@ -2,16 +2,8 @@ from TradingStrategies import *
 from stocks import *
 from AgentClass import * 
 
+import matplotlib.ticker as ticker 
 
-# global variables 
-NUMBEROFDAYS = 100
-
-INITIALPRICE = 100  # Initial stock price
-DRIFT = 0.0001       # Drift term
-VOLATILITY = 0.01  # Volatility term
-NUMBEROFSIMULATIONS = 5  # Number of simulations
-
-DT = 1/24
 
 # initial money for agent 
 INITIALMONEY = 1000
@@ -40,22 +32,28 @@ def MainSimulation(initialMoney, tradingStrategy, show):
         for i in range(len(agent.buyList)):
             plt.scatter(agent.buyList[i], stock[agent.buyList[i]], s= 200, color = 'red')#, label = 'Buy')
             plt.scatter(agent.sellList[i], stock[agent.sellList[i]], s=200, color = 'green')#, label = 'Sell')
-        ShowStock(stock, False, 0, False, [5, 20], NUMBEROFDAYS, DT, 'Profit: ' + str(agent.money - initialMoney))
+        ShowStock(stock, False, 0, False, [5, 20], NUMBEROFDAYS, DT, 'Profit: ' + str(np.round(agent.money - initialMoney, 2)))
+
         # plt.plot(stock)
         # plt.legend()
+        # plt.xscale()
         plt.show()
     
     print('current money after trading: ', agent.money)
 
 
 # MainSimulation(INITIALMONEY, BreakOut, True)
+# MainSimulation(INITIALMONEY, BreakOut, True)
+# MainSimulation(INITIALMONEY, BreakOut, True)
+# MainSimulation(INITIALMONEY, BreakOut, True)
+
 
 
 
 def CompareTradingStrategies(initialMoney, holdsAtOnce, numberOfAverages): 
 
     # one stock (for now, only one) that all agents with all different trading strategies will follow 
-    globalStock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
+    # globalStock = GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT)
 
     stockList = []
     for i in range(numberOfAverages): 
@@ -63,7 +61,7 @@ def CompareTradingStrategies(initialMoney, holdsAtOnce, numberOfAverages):
         stockList.append(GenerateStocks(INITIALPRICE, DRIFT, VOLATILITY, NUMBEROFDAYS, DT))
 
     # all the trading strategies
-    namesList = ['BuyAndHold', 'MovingAverage', 'Crossover', 'MeanReversion', 'Rangetrading', 'BO', 'MorningNight', 'Scalping', 'Random'] 
+    namesList = ['BH', 'MA', 'CO', 'MR', 'RT', 'BO', 'SC', 'RD'] 
 
 
     # list to store the profits that certain agents make following a certain strategy 
@@ -92,7 +90,7 @@ def CompareTradingStrategies(initialMoney, holdsAtOnce, numberOfAverages):
 
         agentRandom = Agent(initialMoney, BuyAndSellRandomly, globalStock, holdsAtOnce=holdsAtOnce)  
 
-        agentList = [agentBAH, agentMA, agentCO, agentMR, agentRT, agentBO, agentMN, agentSC, agentRandom]
+        agentList = [agentBAH, agentMA, agentCO, agentMR, agentRT, agentBO, agentSC, agentRandom]
 
         
 
@@ -141,14 +139,19 @@ def CompareTradingStrategies(initialMoney, holdsAtOnce, numberOfAverages):
             colors.append('red')
 
     bars = plt.bar(namesList ,profitList, color = colors)
-    plt.title('Comparison of profits with different trading strategies')
+    plt.title('Comparing trading strategies')#, number of holds = ' + str(holdsAtOnce))
     plt.ylabel('Profit')
     # plt.xlabel('Trading Strategy')
     plt.xticks(rotation = 45, fontsize = 8)
+    plt.savefig('/Users/jurekeisinger/Documents/Uni/thirdSemester/simulationOfComplexSystems/SimulationOfComplexSystems/pics/barPlot' + str(holdsAtOnce) + '.png')
     plt.show()
 
+numberOfHoldsList = [1,2,3,4,5,6,7,8,9,10]
 
-CompareTradingStrategies(1000, 5, 100)
+for i in numberOfHoldsList: 
+    CompareTradingStrategies(1000, 1, 500)
+    # plt.savefig('/Users/jurekeisinger/Documents/Uni/thirdSemester/simulationOfComplexSystems/SimulationOfComplexSystems/pics/test.png')
+
 
 
 

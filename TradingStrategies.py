@@ -276,6 +276,14 @@ def BreakOut(stock, timeStep):
             return False, False
     
     else: 
+        # if the stock has been falling for a certain amount of time, *not* within the range, we sell 
+        # currentPrice = stock[timeStep]
+        # if timeStep < 3: 
+        #     return False, False
+        # if stock[timeStep-1] > currentPrice and stock[timeStep-2] > stock[timeStep-1] and stock[timeStep-3] > stock[timeStep-2]: 
+        #     return False, True 
+
+        # else: 
         return False, False
 
 
